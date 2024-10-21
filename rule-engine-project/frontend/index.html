@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        input, textarea, button {
+            margin: 10px 0;
+            display: block;
+            width: 100%;
+            padding: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Rule Engine</h1>
+
+    <h2>Create Rule</h2>
+    <textarea id="rule-input" placeholder="Enter rule here..."></textarea>
+    <button onclick="createRule()">Create Rule</button>
+    <p id="create-result"></p>
+
+    <h2>Evaluate Rule</h2>
+    <input type="text" id="rule-id" placeholder="Enter Rule ID">
+    <textarea id="attributes-input" placeholder='Enter attributes as JSON...'></textarea>
+    <button onclick="evaluateRule()">Evaluate Rule</button>
+    <p id="evaluate-result"></p>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+
+        async function createRule() {
+            const rule = document.getElementById('rule-input').value;
+            const response = await fetch(`${API_BASE_URL}/create_rule`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rule })
+            });
+
+            const result = await response.json();
+            document.getElementById('create-result').textContent = JSON.stringify(result);
+        }
+
+        async function evaluateRule() {
+            const ruleId = document.getElementById('rule-id').value;
+            const attributes = JSON.parse(document.getElementById('attributes-input').value);
+
+            const response = await fetch(`${API_BASE_URL}/evaluate_rule`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rule_id: ruleId, attributes })
+            });
+
+            const result = await response.json();
+            document.getElementById('evaluate-result').textContent = JSON.stringify(result);
+        }
+    </script>
+
+</body>
+</html>
